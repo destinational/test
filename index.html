@@ -1,0 +1,147 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link rel="stylesheet" type="text/css" href="FeedbackStyle.css">
+    <link rel="stylesheet" type="text/css" href="../animation.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.10.0/font/bootstrap-icons.css">
+    <title>Langchain 知识库机器人</title>
+    <style>
+        /* 样式代码 */
+    </style>
+</head>
+<body>
+    <div style="width:100%;">
+        <div class="d-flex flex-column flex-shrink-0 p-3 text-bg-dark nav-wrapper">
+            <a href="/" class="d-flex align-items-center mb-3 mb-md-0 me-md-auto text-white text-decoration-none">
+                <span class="fs-4">Botframework</span>
+            </a>
+            <hr>
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li>
+                    <a class="FeedbackAIHandler" href="./Index.html">
+                        FeedbackAIHandler
+                    </a>
+                </li>
+
+                <li class="mb-1">
+                    <button data-bs-theme="dark" class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false" onclick="switchTools('../BeyondCase/BeyondCase.html')">
+                        <a href="../BeyondCase/BeyondCase.html" class="beyondCase">
+                            BeyondCase
+                        </a>
+                    </button>
+                    <div data-bs-theme="dark" class="collapse" id="dashboard-collapse">
+                        <ul class="btn-toggle-nav list-unstyled fw-normal pb-1 small">
+                            <li><a href="#" class="active link-body-emphasis d-inline-flex text-decoration-none rounded">Generating test case by URL</a></li>
+                            <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Generating test case by LocalFile</a></li>
+                            <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Optimize existing test cases</a></li>
+                            <li><a href="#" class="link-body-emphasis d-inline-flex text-decoration-none rounded">Generating test case for web page</a></li>
+                        </ul>
+                    </div>
+                </li>
+                <li class="mb-1">
+                    <button data-bs-theme="dark" class="btn btn-toggle d-inline-flex align-items-center rounded border-0 collapsed" data-bs-toggle="collapse" data-bs-target="#dashboard-collapse" aria-expanded="false" onclick="switchTools('../BeyondCase/BeyondCase.html')">
+                        <a href="../BeyondCase/BeyondCase.html" class="Langchain">
+                            Langchain
+                        </a>
+                    </button>
+                </li>
+
+            </ul>
+        </div>
+    </div>
+    <div id="Welcome-Page">
+        <div id="How-to-use">
+            <h2>Welcome to Langchain v0.0.1</h2>
+            <p>
+                The Langchain is a knowledge base robot that can help you find the information you need.
+            </p>
+            <p>
+                Please enter your question in the input box below, and the robot will try to answer it for you.
+            </p>
+            <p>
+                If you are not satisfied with the answer, you can give feedback to the robot.
+            </p>
+            <p>
+                There are still many unfinished parts. If you have further comments, please contact us
+            </p>
+            <p>
+                <a>o-zhangpeiran@beyondsoft.com</a href="o-zhangpeiran@beyondsoft.com"> or <a>xueguangxin@beyondsoft.com</a href="xueguangxin@beyondsoft.com">
+            </p>
+        </div>
+    </div>
+    <div id="chat-container">
+        
+        <div id="chat-messages">
+            <div id="chat-messages">
+                <div id="typing-animation" style="display: none; white-space: nowrap;">
+                    <span style="display: inline-block;"></span>
+                    <span style="display: inline-block;"></span>
+                    <span style="display: inline-block;"></span>
+                </div>
+            </div>
+            <div id="dialogue-box" style="margin-top: 20px; padding: 10px; border: 1px solid #ccc; min-height: 200px;">
+                <!-- 对话将在这里显示 -->
+            </div>
+            <!-- 对话问答模块 -->
+            <div id="user-input"><!-- 用户输入 -->
+                <button type="button" id="new-chat-button" onclick="newChat()">New Chat</button>
+                <textarea id="user-message" placeholder="请输入你想查询的问题，我将对比本地知识库以匹配解决方案"></textarea>
+                <button type="button" id="send-button" onclick="sendMessage()">Send</button>
+            </div>
+        </div>
+        <div id="feedback-module">
+            <!-- 机器人回复评价和更正模块 -->
+            <form id="feedbackForm">
+                <label for="rating">请对机器人的回答进行评价（1-5）5分最高1分最低：</label>
+                <input type="number" id="rating" name="rating" min="1" max="5">
+                <label for="correction">如果机器人的回答有误，请在此处进行更正：</label>
+                <textarea id="correction" name="correction"></textarea>
+                <input type="submit" value="提交">
+            </form>
+        </div>
+    </div>
+
+
+    <div id="chat-container">
+        
+        <div id="sidebar"></div>
+        <div id="chat-messages">
+            <div id="typing-animation" style="display: none; white-space: nowrap;">
+                <span style="display: inline-block;"></span>
+                <span style="display: inline-block;"></span>
+                <span style="display: inline-block;"></span>
+            </div>
+        </div>
+        
+        
+        <div id="rating-container">
+            <div id="vote-message" style="display: none;">Please select 1-5 to indicate how satisfied you are with this answer&nbsp;&nbsp;</div>
+            <button class="rating-button" onclick="submitRating(1)" style=" display: none;">1</button>
+            <button class="rating-button" onclick="submitRating(2)" style=" display: none;">2</button>
+            <button class="rating-button" onclick="submitRating(3)" style=" display: none;">3</button>
+            <button class="rating-button" onclick="submitRating(4)" style=" display: none;">4</button>
+            <button class="rating-button" onclick="submitRating(5)" style=" display: none;">5</button>
+            <div id="thanks-message" style="display: none;">Thanks for your vote!</div>
+        </div>
+    </div>
+    <div id="sidebar"></div>
+            <div id="chat-messages">
+                <div id="chat-messages">
+                    <div id="typing-animation" style="display: none; white-space: nowrap;">
+                        <span style="display: inline-block;"></span>
+                        <span style="display: inline-block;"></span>
+                        <span style="display: inline-block;"></span>
+                    </div>
+                </div>
+            </div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="FeedbackScript.js"> </script>
+    <!-- 
+        $("#dialogue-box").append('<p>User: Hello, AI!</p>'); */
+        $("#dialogue-box").append('<p>AI: Hello, User!</p>'); */ 
+    -->
+</body>
+</html>
